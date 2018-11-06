@@ -1,4 +1,4 @@
 export default interface IAction {
-  type: string;
-  payload?: object;
+  readonly type: string;
+  readonly payload?: object;
 }
