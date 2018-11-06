@@ -1,7 +1,7 @@
 import IAction from './interfaces/IAction';
 import IReducer from './interfaces/IReducer';
 
-export class Store {
+export default class Store {
   private state: { [key: string]: object };
   private reducers: { [key: string]: IReducer };
   private subscribers: Array<((state: { [key: string]: object }) => void)>;
