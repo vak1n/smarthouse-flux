@@ -22,8 +22,11 @@ var Store = (function () {
         this.subscribers = this.subscribers.concat([fn]);
         this.notify();
         return function () {
-            _this.subscribers = _this.subscribers.filter(function (sub) { return sub !== fn; });
+            _this.unsubscribe(fn);
         };
+    };
+    Store.prototype.unsubscribe = function (fn) {
+        this.subscribers = this.subscribers.filter(function (sub) { return sub !== fn; });
     };
     Store.prototype.dispatch = function (action) {
         this.state = this.reduce(this.state, action);

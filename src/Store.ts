@@ -25,8 +25,12 @@ export default class Store {
     this.subscribers = [...this.subscribers, fn];
     this.notify();
     return () => {
-      this.subscribers = this.subscribers.filter(sub => sub !== fn);
+      this.unsubscribe(fn);
     };
+  }
+
+  public unsubscribe(fn: () => void) {
+    this.subscribers = this.subscribers.filter((sub) => sub !== fn);
   }
 
   public dispatch<T>(action: IAction<T>) {
