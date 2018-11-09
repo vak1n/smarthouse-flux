@@ -1,4 +1,4 @@
-export default interface IAction {
+export default interface IAction<T> {
   readonly type: string;
-  readonly payload?: object;
+  readonly payload?: T;
 }

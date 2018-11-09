@@ -2,14 +2,19 @@ import IAction from './interfaces/IAction';
 import IReducer from './interfaces/IReducer';
 
 export default class Store {
-  private state: { [key: string]: object };
-  private reducers: { [key: string]: IReducer };
-  private subscribers: Array<((state: { [key: string]: object }) => void)>;
+  protected state: { [key: string]: any[] };
+  protected reducers: { [key: string]: IReducer<any> };
+  protected subscribers: Array<((state: { [key: string]: any[] }) => void)>;
 
-  constructor(reducers = {}, initialState = {}) {
+  constructor() {
     this.subscribers = [];
-    this.reducers = reducers;
-    this.state = this.reduce(initialState, {type: ''});
+    this.reducers = {};
+    this.state = {};
+  }
+
+  public addReducer<T>(key: string, reducer: IReducer<T>) {
+    this.reducers[key] = reducer;
+    this.state = this.reduce({}, { type: '' });
   }
 
   get value() {
@@ -24,19 +29,19 @@ export default class Store {
     };
   }
 
-  public dispatch(action: IAction) {
+  public dispatch<T>(action: IAction<T>) {
     this.state = this.reduce(this.state, action);
     this.notify();
   }
 
-  private notify() {
+  protected notify() {
     this.subscribers.forEach(fn => fn(this.value));
   }
 
-  private reduce(state: { [key: string]: object }, action: IAction) {
-    const newState: { [key: string]: object } = {};
-    Object.keys(this.reducers).forEach((prop) => {
-      newState[prop] = this.reducers[prop](state[prop], action);
+  protected reduce<T>(state: { [key: string]: any[] }, action: IAction<T>) {
+    const newState: { [key: string]: object[] } = {};
+    Object.keys(this.reducers).forEach((key) => {
+      newState[key] = this.reducers[key](state[key], action);
     });
     return newState;
   }
