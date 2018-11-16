@@ -6,7 +6,7 @@ var Store = (function () {
         this.store = defaultSore;
         dispatcher.register(function (action) {
             _this.store = reducer(_this.store, action);
-            emitter.trigger('storeChanged', _this.store.slice());
+            emitter.trigger(action.type, _this.store.slice());
         });
     }
     return Store;

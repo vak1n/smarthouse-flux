@@ -11,7 +11,7 @@ export default class Store<T> {
 
     dispatcher.register((action: IAction<T>) => {
       this.store = reducer(this.store, action);
-      emitter.trigger('storeChanged', [...this.store]);
+      emitter.trigger(action.type, [...this.store]);
     });
   }
 }

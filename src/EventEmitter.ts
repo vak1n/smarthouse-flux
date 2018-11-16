@@ -17,8 +17,10 @@ export default class EventEmitter<T> implements IEventEmitter<T> {
 
   public trigger(eventName: string, data: T[]) {
     const listeners = this.listeners[eventName];
-    listeners.forEach((callback) => {
-      callback(data);
-    });
+    if (listeners) {
+      listeners.forEach((callback) => {
+        callback(data);
+      });
+    }
   }
 }

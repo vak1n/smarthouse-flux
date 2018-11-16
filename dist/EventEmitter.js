@@ -12,9 +12,11 @@ var EventEmitter = (function () {
     };
     EventEmitter.prototype.trigger = function (eventName, data) {
         var listeners = this.listeners[eventName];
-        listeners.forEach(function (callback) {
-            callback(data);
-        });
+        if (listeners) {
+            listeners.forEach(function (callback) {
+                callback(data);
+            });
+        }
     };
     return EventEmitter;
 }());
