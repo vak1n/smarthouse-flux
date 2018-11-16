@@ -1,52 +1,17 @@
 import IAction from './interfaces/IAction';
+import IDispatcher from './interfaces/IDispatcher';
+import IEventEmitter from './interfaces/IEventEmitter';
 import IReducer from './interfaces/IReducer';
 
-export default class Store {
-  protected state: { [key: string]: any[] };
-  protected reducers: { [key: string]: IReducer<any> };
-  protected subscribers: Array<((state: { [key: string]: any[] }) => void)>;
+export default class Store<T> {
+  protected store: T[];
 
-  constructor() {
-    this.subscribers = [];
-    this.reducers = {};
-    this.state = {};
-  }
+  constructor(defaultSore: T[], reducer: IReducer<T>, dispatcher: IDispatcher<T>, emitter: IEventEmitter<T>) {
+    this.store = defaultSore;
 
-  public addReducer<T>(key: string, reducer: IReducer<T>) {
-    this.reducers[key] = reducer;
-    this.state = this.reduce({}, { type: '' });
-  }
-
-  get value() {
-    return this.state;
-  }
-
-  public subscribe(fn: () => void) {
-    this.subscribers = [...this.subscribers, fn];
-    this.notify();
-    return () => {
-      this.unsubscribe(fn);
-    };
-  }
-
-  public unsubscribe(fn: () => void) {
-    this.subscribers = this.subscribers.filter((sub) => sub !== fn);
-  }
-
-  public dispatch<T>(action: IAction<T>) {
-    this.state = this.reduce(this.state, action);
-    this.notify();
-  }
-
-  protected notify() {
-    this.subscribers.forEach(fn => fn(this.value));
-  }
-
-  protected reduce<T>(state: { [key: string]: any[] }, action: IAction<T>) {
-    const newState: { [key: string]: object[] } = {};
-    Object.keys(this.reducers).forEach((key) => {
-      newState[key] = this.reducers[key](state[key], action);
+    dispatcher.register((action: IAction<T>) => {
+      this.store = reducer(this.store, action);
+      emitter.trigger('storeChanged', [...this.store]);
     });
-    return newState;
   }
 }

@@ -1,7 +1,7 @@
-import I, { default as IEventEmitter } from './interfaces/IEventEmitter';
+import IEventEmitter from './interfaces/IEventEmitter';
 
 export default class EventEmitter<T> implements IEventEmitter<T> {
-  protected listeners: { [key: string]: Array<(data: T) => void> };
+  protected listeners: { [key: string]: Array<(data: T[]) => void> };
 
   constructor() {
     this.listeners = {};
@@ -15,7 +15,7 @@ export default class EventEmitter<T> implements IEventEmitter<T> {
     this.listeners[eventName].push(callback);
   }
 
-  public trigger(eventName: string, data: T) {
+  public trigger(eventName: string, data: T[]) {
     const listeners = this.listeners[eventName];
     listeners.forEach((callback) => {
       callback(data);

@@ -1,5 +1,5 @@
 import IAction from './IAction';
 
-type IReducer<T> = (state: T[], action: IAction<T>) => T[];
+type IReducer<T> = (store: T[], action: IAction<T>) => T[];
 
 export default IReducer;
