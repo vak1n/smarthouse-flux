@@ -2,11 +2,7 @@ const PUBLIC_PATH = require('path').join(__dirname, 'app');
 
 module.exports = {
   entry: {
-    index: './app/app.ts'
-  },
-  output: {
-    path: PUBLIC_PATH,
-    filename: '[name].js',
+    index: './app/index.tsx'
   },
   devServer: {
     disableHostCheck: true,
@@ -15,6 +11,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
       {
         test: /\.tsx?$/,
         use: {

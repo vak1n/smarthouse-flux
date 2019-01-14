@@ -1,0 +1,16 @@
+.TodoList-Complete {
+    cursor: pointer;
+}
+
+.TodoList-Complete:checked ~ .TodoList-Label {
+    text-decoration: line-through;
+}
+
+.TodoList-Delete {
+    display: none;
+}
+
+.TodoList-DeleteLabel {
+    cursor: pointer;
+    margin-left: 5px;
+}
