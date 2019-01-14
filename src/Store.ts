@@ -14,4 +14,8 @@ export default class Store<T> {
       emitter.trigger(action.type, [...this.store]);
     });
   }
+
+  public getStore() {
+    return [...this.store];
+  }
 }
