@@ -9,6 +9,9 @@ var Store = (function () {
             emitter.trigger(action.type, _this.store.slice());
         });
     }
+    Store.prototype.getStore = function () {
+        return this.store.slice();
+    };
     return Store;
 }());
 exports.default = Store;
