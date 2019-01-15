@@ -153,3 +153,10 @@ npm test
 npm run test-cover
 ```
 (см. папка coverage)
+
+мутационное тестирование:
+
+```sh
+npm run test-stryker
+```
+(см. папка reports)
