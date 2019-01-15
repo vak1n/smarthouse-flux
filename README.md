@@ -12,26 +12,33 @@ npm i --save https://github.com/vak1n/smarthouse-flux.git
 
 #### Интерфейсы
 
-- IAction интерфейс экшена
-- IReducer интерфейс редьюсера
+- IAction           действие
+- IDispatcher       диспетчер
+- IEventEmitter     транслятор событий
+- IReducer          редьюсер
 
 #### Создание акшенов
 
 Класс с фабричными методами экшенов для списка дел
 
-actions.ts:
+TodoAction.ts:
 ```ts
-import { IAction } from 'smarthouse-flux';
-import ITodo from '../interfaces/ITodo';
+export class TodoAction {
+  public static readonly ADD: string = '[TODO] ADD';
+  public static readonly DELETE: string = '[TODO] DELETE';
 
-export const TODO_ADD = '[TODO] ADD';
-
-export class TodoActions {
-  public static add(data: ITodo): IAction<ITodo> {
+  public static add(todo: ITodo): IAction<ITodo> {
     return {
-      payload: data,
-      type: TODO_ADD
-    }
+      payload: todo,
+      type: this.ADD,
+    };
+  }
+
+  public static delete(todo: ITodo): IAction<ITodo> {
+    return {
+      payload: todo,
+      type: this.DELETE,
+    };
   }
 }
 ```
@@ -40,25 +47,27 @@ export class TodoActions {
 
 Редьюсер для списка дел
 
-reducer.ts:
+todoReducer.ts:
 ```ts
-import { IAction } from 'smarthouse-flux';
-import { IReducer } from 'smarthouse-flux';
-import ITodo from '../interfaces/ITodo';
-import * as actions from './actions';
-
 const initialState: ITodo[] = [];
 
-export const todoReducer: IReducer<ITodo> = (
-  state = initialState,
-  action: IAction<ITodo>,
-) => {
+export const todoReducer: IReducer<ITodo> = (state = initialState, action: IAction<ITodo>) => {
   switch (action.type) {
-    case actions.TODO_ADD: {
+    case TodoAction.ADD: {
+      if (!action.payload) {
+        return [...state];
+      }
       return [...state, action.payload];
     }
-  }
 
+    case TodoAction.DELETE: {
+      if (!action.payload) {
+        return [...state];
+      }
+      const newState = state.filter((todo) => todo.id !== action.payload!.id);
+      return [...newState];
+    }
+  }
   return state;
 };
 ```
@@ -68,46 +77,46 @@ export const todoReducer: IReducer<ITodo> = (
 Инициализация стора и добавление редьюсера списка дел
 
 ```ts
-import { Store } from 'smarthouse-flux';
-import ITodo from '../interfaces/ITodo';
-import { TodoActions } from '../store/todo/actions';
-import { todoReducer } from '../store/todo/reducer';
+export interface ITodo {
+  id: string;
+  label: string;
+  complete: boolean;
+}
 
-const store = new Store();
-store.addReducer('todo', todoReducer);
+const eventEmitter = new EventEmitter<ITodo>();
+const dispatcher = new Dispatcher<ITodo>();
+const store = new Store<ITodo>([], todoReducer, dispatcher, eventEmitter);
 ```
 
 #### Подписка на изменение стора
 
 ```ts
-store.subscribe(()=> {
-  const todo: ITodo[] = store.value.todo;
-  /* какое нибудь действие */
+eventEmitter.on('actionName', () => {
+  /* обработка изменнения например обновление стейта в react компоненте */
+  this.setState(() => {
+    return {
+      list: store.getStore(),
+    };
+  });
 });
 ```
 
 #### Отписка от изменения стора
 
-```ts
-const unsubscribe = store.subscribe(()=> {
-  const todo: ITodo[] = store.value.todo;
-  /* какое нибудь действие */
-});
-unsubscribe();
-```
+** TODO **
 
 #### Изменение состояния
 
 ```ts
-store.dispatch(TodoActions.add({ label: 'to do something', complete: false }));
+dispatcher.dispatch(TodoAction.add(this.state.todo));
 ```
 
 ## Разработка
 
 Окружение при разработке:
 
-- node --version v10.12.0
-- npm --version 6.4.1
+- node --version ^10.12.0
+- npm --version ^6.4.1
 
 #### Установка
 
@@ -115,6 +124,12 @@ store.dispatch(TodoActions.add({ label: 'to do something', complete: false }));
 git clone https://github.com/vak1n/smarthouse-flux
 cd smarthouse-flux
 npm install
+```
+
+#### Запуск
+
+```sh
+npm start
 ```
 
 #### Сборка
