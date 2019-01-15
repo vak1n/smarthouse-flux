@@ -103,7 +103,10 @@ eventEmitter.on('actionName', () => {
 
 #### Отписка от изменения стора
 
-** TODO **
+```ts
+const unsubscribe = eventEmitter.on('actionName', () => {});
+unsubscribe();
+```
 
 #### Изменение состояния
 

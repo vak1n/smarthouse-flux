@@ -13,6 +13,9 @@ export default class EventEmitter<T> implements IEventEmitter<T> {
     }
 
     this.listeners[eventName].push(callback);
+    return () => {
+      this.listeners[eventName] = this.listeners[eventName].filter((fn) => fn !== callback);
+    };
   }
 
   public trigger(eventName: string, data: T[]) {

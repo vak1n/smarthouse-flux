@@ -29,4 +29,13 @@ describe('Используем EventEmitter приложения', () => {
 
     expect(error).to.equal(data);
   });
+
+  it('добавляем слушателя, отписываемся и проверяем что список слушателей пустой', () => {
+    const eventEmitter = new EventEmitter;
+
+    const unsubscribe = eventEmitter.on('test', listener);
+    unsubscribe();
+
+    expect(eventEmitter.listeners['test'].length).to.equal(0);
+  });
 });

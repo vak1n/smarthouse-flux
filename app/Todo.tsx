@@ -39,8 +39,12 @@ export interface ITodoState {
 }
 
 export class Todo extends React.PureComponent<{}, ITodoState> {
+  protected subscribers: Array<() => void>;
+
   constructor(props: {}) {
     super(props);
+    this.subscribe = this.subscribe.bind(this);
+    this.unsubscribe = this.unsubscribe.bind(this);
     this.handlerAddTodo = this.handlerAddTodo.bind(this);
     this.handlerChangeTodoLabel = this.handlerChangeTodoLabel.bind(this);
     this.handlerTodoComplete = this.handlerTodoComplete.bind(this);
@@ -53,19 +57,32 @@ export class Todo extends React.PureComponent<{}, ITodoState> {
         label: '',
       },
     };
+    this.subscribers = [];
   }
 
   public componentDidMount() {
     this.setState({ list: store.getStore() });
+    this.subscribe();
+  }
+
+  public subscribe() {
+    this.subscribers = [];
     [TodoAction.ADD, TodoAction.COMPLETE, TodoAction.DELETE].forEach((action) => {
-      eventEmitter.on(action, () => {
-        this.setState(() => {
-          return {
-            list: store.getStore(),
-          };
-        });
-      });
+      this.subscribers.push(
+        eventEmitter.on(action, () => {
+          this.setState(() => {
+            return {
+              list: store.getStore(),
+            };
+          });
+        }),
+      );
     });
+  }
+
+  public unsubscribe() {
+    this.subscribers.forEach((unsubscribe) => unsubscribe());
+    this.subscribers = [];
   }
 
   public handlerAddTodo() {
@@ -136,6 +153,12 @@ export class Todo extends React.PureComponent<{}, ITodoState> {
         />
         <button className="Todo-Button Todo-Button_add" type="button" onClick={this.handlerAddTodo}>
           Add todo
+        </button>
+        <button className="Todo-Button Todo-Button_unsubscribe" type="button" onClick={this.unsubscribe}>
+          Unsubscribe
+        </button>
+        <button className="Todo-Button Todo-Button_subscribe" type="button" onClick={this.subscribe}>
+          Subscribe
         </button>
       </div>
     );
