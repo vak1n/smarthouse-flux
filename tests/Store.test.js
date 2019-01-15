@@ -38,6 +38,6 @@ describe('Используем Store приложения', () => {
 
     dispatcher.dispatch(new Action());
 
-    expect(store.store).to.shallowDeepEqual([data]);
+    expect(store.getStore()).to.shallowDeepEqual([data]);
   });
 });
