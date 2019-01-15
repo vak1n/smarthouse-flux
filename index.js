@@ -1,9 +1,9 @@
-import IAction from './dist/interfaces/IAction';
-import IReducer from './dist/interfaces/IReducer';
 import Store from './dist/Store';
+import Dispatcher from './dist/Dispatcher';
+import EventEmitter from './dist/EventEmitter';
 
 export {
-  IReducer,
-  IAction,
-  Store
+  Store,
+  Dispatcher,
+  EventEmitter
 }
